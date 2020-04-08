@@ -10,9 +10,12 @@ import view.ArticlesListView
 import java.time.LocalDate
 
 class MongoDbView : View() {
+    private val articleView = ArticleView()
+    private val articleList = ArticlesListView(articleView)
+
     override val root = hbox {
-        add(ArticleView::class)
-        add(ArticlesListView::class)
+        add(articleView)
+        add(articleList)
     }
 }
 

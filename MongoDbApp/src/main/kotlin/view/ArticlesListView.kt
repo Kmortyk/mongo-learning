@@ -4,6 +4,7 @@ import javafx.collections.FXCollections
 import javafx.scene.control.SelectionMode
 import tornadofx.View
 import tornadofx.listview
+import tornadofx.onUserSelect
 import tornadofx.tableview
 import java.time.LocalDate
 
@@ -24,7 +25,7 @@ import java.time.LocalDate
 //    }
 //}
 
-class ArticlesListView : View() {
+class ArticlesListView(articleView: ArticleView) : View() {
     override val root = listview<String> {
         items.add("Alpha")
         items.add("Beta")
@@ -32,7 +33,8 @@ class ArticlesListView : View() {
         items.add("Delta")
         items.add("Epsilon")
         selectionModel.selectionMode = SelectionMode.SINGLE
-        apply {
+        onUserSelect {
+
         }
     }
 }

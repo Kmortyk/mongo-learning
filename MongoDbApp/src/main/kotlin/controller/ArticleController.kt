@@ -8,16 +8,19 @@ import tornadofx.*
 
 class ArticleController: Controller() {
 
-    fun header(text: String) : StackPane {
+    companion object {
+        val HEADER_STEP = 3.px
+    }
+
+    fun header(text: String, size: Int = 1) : StackPane {
         return StackPane().apply {
             label(text) {
                 maxWidth = Double.MAX_VALUE
                 alignment = Pos.BASELINE_LEFT
                 style {
-                    fontSize = 20.px
+                    fontSize = 25.px - size * HEADER_STEP
                     fontWeight = FontWeight.BOLD
                     padding = box(15.px, 10.px)
-                    // backgroundColor += c("#cecece")
                 }
             }
         }
