@@ -21,13 +21,13 @@ class ArticleView: View() {
         // clear old blocks
         root.clear()
         // add header
-        root.add(controller.header(article.articleName.text))
+        root.add(controller.header(article.articleHeader.text))
         // add content blocks
         for(b in article.contentBlocks) {
             when (b) {
                 is HeaderBlock -> root.add(controller.header(b.text, b.size))
                 is TextBlock   -> root.add(controller.text(b.text))
-                is ImageBlock  -> root.add(controller.image(b.image))
+                // is ImageBlock  -> root.add(controller.image(b.image))
             }
         }
     }

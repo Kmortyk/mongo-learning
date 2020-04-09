@@ -25,13 +25,9 @@ import java.time.LocalDate
 //    }
 //}
 
-class ArticlesListView(articleView: ArticleView) : View() {
+class ArticlesListView(articleView: ArticleView, articlesList: List<String>) : View() {
     override val root = listview<String> {
-        items.add("Alpha")
-        items.add("Beta")
-        items.add("Gamma")
-        items.add("Delta")
-        items.add("Epsilon")
+        items.addAll(articlesList)
         selectionModel.selectionMode = SelectionMode.SINGLE
         onUserSelect {
 

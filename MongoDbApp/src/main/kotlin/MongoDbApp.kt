@@ -1,17 +1,20 @@
-import javafx.collections.FXCollections
-import javafx.scene.text.FontWeight
+import storage.MongoDbStorage
 import tornadofx.*
-
-import tornadofx.View
-import tornadofx.hbox
-import tornadofx.label
-import view.ArticleView
-import view.ArticlesListView
-import java.time.LocalDate
+import view.*
 
 class MongoDbView : View() {
+
+    // main mongo db storage instance
+    private val storage = MongoDbStorage()
+
+    // current article view
     private val articleView = ArticleView()
-    private val articleList = ArticlesListView(articleView)
+
+    // selectable articles list
+    private val articleList = ArticlesListView(
+        articleView,
+        storage.getArticlesNames()
+    )
 
     override val root = hbox {
         add(articleView)
@@ -19,4 +22,5 @@ class MongoDbView : View() {
     }
 }
 
-class MongoDbApp : App(MongoDbView::class)
+class MongoDbApp :
+    App(MongoDbView::class)

@@ -175,3 +175,27 @@ db.users.remove({username:'Tom'},true)
 
 db.users.update({username:'Tom'},{$push:{languages:'english'}})
 
+// Create users
+db.createUser(
+  {
+    user: "kmortyk2",
+    pwd: "qivYG3uFrI", 
+    roles: [
+       { role: "readWrite", db: "mongo_java_app" }
+    ]
+  }
+);
+
+// Insert articels
+db.articles.insertMany([
+    { name: "How cool mongodb is", timestamp: 1586402455943, blocks: [
+        { type: "header", text: "Hello!" },
+        { type: "text", text: "It's cool" },
+        { type: "text", text: "Yeah" }
+    ]},
+    { name: "How cool tornadofx is", timestamp: 1586402463838, blocks: [
+        { type: "header", text: "Kotlin" },
+        { type: "text", text: "Such cool" },
+        { type: "text", text: "Nice" }
+    ]}
+ ]);
