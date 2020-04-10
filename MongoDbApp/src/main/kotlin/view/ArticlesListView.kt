@@ -1,52 +1,67 @@
 package view
 
+import javafx.collections.ObservableList
+import javafx.event.EventHandler
 import javafx.scene.control.Alert
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TextInputDialog
+import javafx.scene.text.Text
 import model.EmptyArticle
 import storage.Storage
 import tornadofx.View
 import tornadofx.alert
 import tornadofx.listview
-import tornadofx.shortpress
-import view.ArticlesListCell.Companion.ADD_ITEM
+import view.ArticlesListCell.Companion.ITEM_ADD
+import view.ArticlesListCell.Companion.ITEM_REMOVE
 
-class ArticlesListView(articleView: ArticleView, storage: Storage) : View() {
+class ArticlesListView(private val articleView: ArticleView,
+                       private val storage: Storage) : View() {
+
     override val root = listview<String> {
-
-        setCellFactory { _ -> ArticlesListCell() }
+        setCellFactory { ArticlesListCell() }
 
         items.addAll(storage.getArticlesNames())
         items.add("+")
         selectionModel.selectionMode = SelectionMode.SINGLE
 
-        shortpress{
-            val its = selectionModel.selectedItems
-            if(its.size == 0) return@shortpress
-            val cur = its[0]
+        onMouseClicked = EventHandler {
+            val n = it.pickResult.intersectedNode
+            if(n is Text && n.text == ITEM_REMOVE) {
+                // remove item
+            } else {
+                val its = selectionModel.selectedItems
+                if(its.size == 0) return@EventHandler
+                var cur = its[0]
 
-            if(cur == ADD_ITEM) {
-                selectionModel.clearSelection()
-
-                val dlg = TextInputDialog()
-                dlg.title = "New article"
-                dlg.headerText = "Article name:"
-                dlg.graphic = null
-
-                val result = dlg.showAndWait()
-                result.ifPresent {
-                    if(items.contains(it)) {
-                        alert(Alert.AlertType.WARNING, "Article exists.")
-                        return@ifPresent
-                    }
-                    if(it.isNotEmpty()) {
-                        storage.putArticle(it, EmptyArticle(it))
-                        items.add(items.size-1, it)
-                    }
+                if(cur == ITEM_ADD) {
+                    selectionModel.clearSelection()
+                    addItem(items)
+                    cur = items[items.size - 2]
                 }
-            }
 
-            articleView.setArticle(storage.getArticle(cur.toString()))
+                articleView.setArticle(
+                    storage.getArticle(cur.toString())
+                )
+            }
+        }
+    }
+
+    private fun addItem(items: ObservableList<String>) {
+        val dlg = TextInputDialog()
+        dlg.title = "New article"
+        dlg.headerText = "Article name:"
+        dlg.graphic = null
+
+        val result = dlg.showAndWait()
+        result.ifPresent {
+            if(items.contains(it)) { // if exists
+                alert(Alert.AlertType.WARNING, "Article exists.")
+                return@ifPresent
+            }
+            if(it.isNotEmpty()) { // add new
+                storage.putArticle(it, EmptyArticle(it))
+                items.add(items.size-1, it)
+            }
         }
     }
 }
