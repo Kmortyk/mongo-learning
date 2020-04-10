@@ -2,15 +2,16 @@ package view
 
 import controller.ArticleController
 import model.*
-import tornadofx.View
-import tornadofx.clear
-import tornadofx.vbox
+import tornadofx.*
 
 class ArticleView: View() {
     private val controller: ArticleController by inject()
     private var article: Article = HelloArticle()
 
-    override val root = vbox {}
+    override val root = vbox {
+        maxWidth = 1000.0
+        useMaxWidth = true
+    }
 
     init {
         setArticle(article)

@@ -1,7 +1,6 @@
 package storage
 
 import model.Article
-import model.Block
 
 enum class SortType {
     BY_NAME, BY_DATE

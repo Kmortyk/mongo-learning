@@ -1,36 +1,52 @@
 package view
 
-import javafx.collections.FXCollections
+import javafx.scene.control.Alert
 import javafx.scene.control.SelectionMode
+import javafx.scene.control.TextInputDialog
+import model.EmptyArticle
+import storage.Storage
 import tornadofx.View
+import tornadofx.alert
 import tornadofx.listview
-import tornadofx.onUserSelect
-import tornadofx.tableview
-import java.time.LocalDate
+import tornadofx.shortpress
+import view.ArticlesListCell.Companion.ADD_ITEM
 
-//class ArticlesListView : View() {
-//    private val persons = FXCollections.observableArrayList(
-//        Person(1, "Samantha Stuart", LocalDate.of(1981,12,4)),
-//        Person(2, "Tom Marks", LocalDate.of(2001,1,23)),
-//        Person(3, "Stuart Gills", LocalDate.of(1989,5,23)),
-//        Person(3, "Nicole Williams", LocalDate.of(1998,8,11))
-//    )
-//
-//    override val root = tableview( persons) {
-//        column("ID", Person::id)
-//        column("Name", Person::name)
-//        column("Birthday", Person::birthday)
-//        column("Age", Person::age)
-//        columnResizePolicy = SmartResize.POLICY
-//    }
-//}
-
-class ArticlesListView(articleView: ArticleView, articlesList: List<String>) : View() {
+class ArticlesListView(articleView: ArticleView, storage: Storage) : View() {
     override val root = listview<String> {
-        items.addAll(articlesList)
-        selectionModel.selectionMode = SelectionMode.SINGLE
-        onUserSelect {
 
+        setCellFactory { _ -> ArticlesListCell() }
+
+        items.addAll(storage.getArticlesNames())
+        items.add("+")
+        selectionModel.selectionMode = SelectionMode.SINGLE
+
+        shortpress{
+            val its = selectionModel.selectedItems
+            if(its.size == 0) return@shortpress
+            val cur = its[0]
+
+            if(cur == ADD_ITEM) {
+                selectionModel.clearSelection()
+
+                val dlg = TextInputDialog()
+                dlg.title = "New article"
+                dlg.headerText = "Article name:"
+                dlg.graphic = null
+
+                val result = dlg.showAndWait()
+                result.ifPresent {
+                    if(items.contains(it)) {
+                        alert(Alert.AlertType.WARNING, "Article exists.")
+                        return@ifPresent
+                    }
+                    if(it.isNotEmpty()) {
+                        storage.putArticle(it, EmptyArticle(it))
+                        items.add(items.size-1, it)
+                    }
+                }
+            }
+
+            articleView.setArticle(storage.getArticle(cur.toString()))
         }
     }
 }

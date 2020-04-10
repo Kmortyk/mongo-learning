@@ -1,6 +1,9 @@
 import storage.MongoDbStorage
-import tornadofx.*
-import view.*
+import tornadofx.App
+import tornadofx.View
+import tornadofx.hbox
+import view.ArticleView
+import view.ArticlesListView
 
 class MongoDbView : View() {
 
@@ -11,10 +14,7 @@ class MongoDbView : View() {
     private val articleView = ArticleView()
 
     // selectable articles list
-    private val articleList = ArticlesListView(
-        articleView,
-        storage.getArticlesNames()
-    )
+    private val articleList = ArticlesListView(articleView, storage)
 
     override val root = hbox {
         add(articleView)
@@ -22,5 +22,6 @@ class MongoDbView : View() {
     }
 }
 
+// options: --module-path /usr/share/openjfx/lib --add-modules=javafx.controls
 class MongoDbApp :
     App(MongoDbView::class)

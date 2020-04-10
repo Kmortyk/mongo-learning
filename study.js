@@ -186,6 +186,9 @@ db.createUser(
   }
 );
 
+// Use db
+use mongo_java_app
+
 // Insert articels
 db.articles.insertMany([
     { name: "How cool mongodb is", timestamp: 1586402455943, blocks: [

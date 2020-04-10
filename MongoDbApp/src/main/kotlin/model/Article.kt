@@ -3,6 +3,10 @@ package model
 open class Article(name: String, val contentBlocks: List<Block> = listOf()) {
     val articleHeader: HeaderBlock = HeaderBlock(name)
     val timestamp: Long = System.currentTimeMillis()
+
+    override fun toString(): String {
+        return "Article(contentBlocks=$contentBlocks, articleHeader=$articleHeader)"
+    }
 }
 
 /* Default greetings article */
@@ -22,4 +26,10 @@ class ErrorArticle(errText: String) : Article (
     listOf(
         TextBlock("=(")
     )
+)
+
+/* Default empty article */
+class EmptyArticle(text: String) : Article (
+    text,
+    listOf()
 )
