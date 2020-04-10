@@ -25,14 +25,16 @@ class ArticlesListView(private val articleView: ArticleView,
         selectionModel.selectionMode = SelectionMode.SINGLE
 
         onMouseClicked = EventHandler {
+            val its = selectionModel.selectedItems
+            if(its.size == 0) return@EventHandler
+            var cur = its[0]
+
             val n = it.pickResult.intersectedNode
             if(n is Text && n.text == ITEM_REMOVE) {
                 // remove item
+                items.remove(cur)
+                storage.removeArticle(cur)
             } else {
-                val its = selectionModel.selectedItems
-                if(its.size == 0) return@EventHandler
-                var cur = its[0]
-
                 if(cur == ITEM_ADD) {
                     selectionModel.clearSelection()
                     addItem(items)

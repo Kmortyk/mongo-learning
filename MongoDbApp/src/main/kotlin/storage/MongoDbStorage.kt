@@ -74,6 +74,11 @@ class MongoDbStorage : Storage {
         col.insertOne(doc)
     }
 
+    override fun removeArticle(key: String) {
+        val col = database.getCollection(COL_ARTICLES)
+        col.deleteOne(eq("name", key))
+    }
+
     override fun getArticle(key: String) : Article {
         val col = database.getCollection(COL_ARTICLES)
         val doc = col.find(eq("name", key)).first() ?:
@@ -94,7 +99,7 @@ class MongoDbStorage : Storage {
         return Article(doc["name"].toString(), blocks)
     }
 
-    override fun getArticlesNames(): List<String> {
+    override fun getArticlesNames(type: SortType): List<String> {
         return database.getCollection(COL_ARTICLES)
                        .distinct("name", String::class.java)
                        .toList()
