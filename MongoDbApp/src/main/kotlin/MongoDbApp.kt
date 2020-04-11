@@ -14,6 +14,20 @@ import tornadofx.*
 import view.ArticleView
 import view.ArticlesListView
 
+/**
+ * TODO
+ * 1. Сортировка по дате в списке статей
+ * 2. Сортировка по имени в списке статей (кнопка)
+ * 3. Удаление блоков в статье (кнопка + функционал)
+ * 4. Обновление данных при обновление блока в базе данных
+ * 5. Таблица картинок (как сделать?)
+ * 6. Блок-картинка
+ * 7. Загрузка картинки с файловой системы в базу данных
+ * 8. Сменить картинку правой кнопкой мыши при редактировании статьи
+ * 9. Статьи в опредлённую дату (функцимонал)
+ * 10. Убрать рамки вокруг блоков
+ * */
+
 class MongoDbView : View() {
 
     companion object {
@@ -48,16 +62,13 @@ class MongoDbView : View() {
                 }
 
                 actionable(menu(null, imh), EventHandler {
-                    println("ACTION!!!")
-                    controller.addBlock(HeaderBlock(text = "Awesome header"))
+                    controller.addBlock(HeaderBlock(text="Awesome header"))
                 })
                 actionable(menu(null, imt), EventHandler {
-                    println("ACTION!!!")
-                    controller.addBlock(TextBlock(text = "Awesome text"))
+                    controller.addBlock(TextBlock(text="Awesome text"))
                 })
                 actionable(menu(null, imi), EventHandler {
-                    println("ACTION!!!")
-                    controller.addBlock(ImageBlock(src = ""))
+                    controller.addBlock(ImageBlock(src=""))
                 })
             }
             add(articleView)
@@ -79,7 +90,8 @@ class MongoDbView : View() {
     }
 
     /* --- Common --------------------------------------------------------------------------------------------------- */
-    open fun actionable(menu: Menu, ev: EventHandler<ActionEvent>) : Menu {
+
+    private fun actionable(menu: Menu, ev: EventHandler<ActionEvent>) : Menu {
         val menuItem = MenuItem()
         menu.items.add(menuItem)
         menu.onAction = ev
