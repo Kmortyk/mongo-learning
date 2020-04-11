@@ -19,6 +19,7 @@ class ArticlesListView(private val articleView: ArticleView,
 
     override val root = listview<String> {
         setCellFactory { ArticlesListCell() }
+        prefWidth = 224.0
 
         items.addAll(storage.getArticlesNames())
         items.add("+")

@@ -1,9 +1,11 @@
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import storage.MongoDbStorage
-import tornadofx.App
-import tornadofx.View
-import tornadofx.hbox
+import tornadofx.*
 import view.ArticleView
 import view.ArticlesListView
+import java.io.File
+
 
 class MongoDbView : View() {
 
@@ -17,11 +19,25 @@ class MongoDbView : View() {
     private val articleList = ArticlesListView(articleView, storage)
 
     override val root = hbox {
-        add(articleView)
+
+        val imh = Image("header.png", 16.0, 16.0, false, true)
+        val imt = Image("text.png",16.0, 16.0, false, true)
+        val imi = Image("image.png",16.0, 16.0, false, true)
+
+        // left view
+        vbox {
+            menubar {
+                menu("", ImageView(imh))
+                menu("", ImageView(imt))
+                menu("", ImageView(imi))
+            }
+            add(articleView)
+        }
+
+        // right view
         add(articleList)
     }
 }
 
 // options: --module-path /usr/share/openjfx/lib --add-modules=javafx.controls
-class MongoDbApp :
-    App(MongoDbView::class)
+class MongoDbApp : App(MongoDbView::class)
