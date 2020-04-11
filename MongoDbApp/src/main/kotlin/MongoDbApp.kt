@@ -2,6 +2,7 @@ import javafx.scene.control.DatePicker
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.Background
+import javafx.stage.Stage
 import storage.MongoDbStorage
 import tornadofx.*
 import view.ArticleView
@@ -57,4 +58,9 @@ class MongoDbView : View() {
 }
 
 // options: --module-path /usr/share/openjfx/lib --add-modules=javafx.controls
-class MongoDbApp : App(MongoDbView::class)
+class MongoDbApp : App(MongoDbView::class) {
+    override fun start(stage: Stage) {
+        stage.isResizable = false
+        super.start(stage)
+    }
+}

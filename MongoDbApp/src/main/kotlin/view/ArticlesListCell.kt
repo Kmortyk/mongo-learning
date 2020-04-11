@@ -11,11 +11,11 @@ import tornadofx.px
 
 internal class ArticlesListCell : ListCell<String?>() {
     companion object{
-        const val ITEM_ADD = "+"
         const val ITEM_REMOVE = "d"
+        const val ITEM_ADD = "+"
 
-        private const val FX_PADDING = "-fx-padding: 4;"
         private const val FX_GREY_BACKGROUND = "-fx-background-color: #d3d3d3;"
+        private const val FX_PADDING = "-fx-padding: 4;"
     }
 
     override fun updateItem(item: String?, empty: Boolean) {
