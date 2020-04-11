@@ -22,7 +22,7 @@ class ArticlesListView(private val articleView: ArticleView,
         prefWidth = 224.0
 
         items.addAll(storage.getArticlesNames())
-        items.add("+")
+        items.add(ITEM_ADD)
         selectionModel.selectionMode = SelectionMode.SINGLE
 
         onMouseClicked = EventHandler {

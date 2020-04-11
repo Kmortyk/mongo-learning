@@ -1,6 +1,7 @@
 import javafx.scene.control.DatePicker
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.layout.Background
 import storage.MongoDbStorage
 import tornadofx.*
 import view.ArticleView
@@ -49,6 +50,7 @@ class MongoDbView : View() {
                 }
                 datepicker()
             }
+            style = "-fx-background-color: #ffffff;"
             add(articleList)
         }
     }
