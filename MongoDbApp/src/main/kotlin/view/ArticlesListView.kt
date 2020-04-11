@@ -6,11 +6,10 @@ import javafx.scene.control.Alert
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TextInputDialog
 import javafx.scene.text.Text
+import javafx.util.Duration
 import model.EmptyArticle
 import storage.Storage
-import tornadofx.View
-import tornadofx.alert
-import tornadofx.listview
+import tornadofx.*
 import view.ArticlesListCell.Companion.ITEM_ADD
 import view.ArticlesListCell.Companion.ITEM_REMOVE
 
@@ -44,6 +43,17 @@ class ArticlesListView(private val articleView: ArticleView,
 
                 articleView.setArticle(
                     storage.getArticle(cur.toString())
+                )
+            }
+        }
+
+        // select first article
+        if(items.size > 0) {
+            runLater(Duration.millis(250.0)) {
+                selectionModel.select(0)
+                focusModel.focus(0)
+                articleView.setArticle(
+                    storage.getArticle(items[0])
                 )
             }
         }
