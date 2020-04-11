@@ -6,6 +6,7 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Updates
 import model.*
 import org.bson.Document
 
@@ -24,8 +25,8 @@ class MongoDbStorage : Storage {
         "mongodb://$USERNAME:$PASSWORD@$HOST:27017/$DATABASE_NAME"
     )
 
-    private val mongoClient : MongoClient
-    private val database : MongoDatabase
+    private val client : MongoClient
+    private val db : MongoDatabase
 
     init {
         val settings = MongoClientSettings.builder()
@@ -33,41 +34,44 @@ class MongoDbStorage : Storage {
             .retryWrites(true)
             .build()
 
-        mongoClient = MongoClients.create(settings)
-        database = mongoClient.getDatabase(DATABASE_NAME)
+        client = MongoClients.create(settings)
+        db = client.getDatabase(DATABASE_NAME)
     }
 
-    /* --- Debug ---------------------------------------------------------------------------------------------------- */
+    private fun blockDocument(b: Block) : Document {
+        val block = Document()
+        when (b) {
+            is HeaderBlock -> {
+                block["type"] = "header"
+                block["text"] = b.text
+            }
+            is TextBlock -> {
+                block["type"] = "text"
+                block["text"] = b.text
+            }
+            is ImageBlock -> {
+                block["type"] = "image"
+                block["src"] = b.src
+            }
+        }
+        return block
+    }
+
+    /* fixme --- debug ---------------------------------------------------------------------------------------------- */
 
     public fun showDatabases() {
-        mongoClient.listDatabaseNames().forEach(::println)
+        client.listDatabaseNames().forEach(::println)
     }
 
     /* --- Implementation ------------------------------------------------------------------------------------------- */
 
     override fun putArticle(key: String, article: Article) {
-        val col = database.getCollection(COL_ARTICLES)
+        val col = db.getCollection(COL_ARTICLES)
         val doc = Document()
         val blocks = mutableListOf<Document>()
 
-        for(b in article.contentBlocks) {
-            val block = Document()
-            when (b) {
-                is HeaderBlock -> {
-                    block["type"] = "header"
-                    block["text"] = b.text
-                }
-                is TextBlock -> {
-                    block["type"] = "text"
-                    block["text"] = b.text
-                }
-                is ImageBlock -> {
-                    block["type"] = "image"
-                    block["src"] = b.src
-                }
-            }
-            blocks.add(block)
-        }
+        for(b in article.contentBlocks)
+            blocks.add(blockDocument(b))
 
         doc["name"] = article.articleHeader.text
         doc["timestamp"] = article.timestamp
@@ -76,14 +80,14 @@ class MongoDbStorage : Storage {
     }
 
     override fun removeArticle(key: String) {
-        val col = database.getCollection(COL_ARTICLES)
-        col.deleteOne(eq("name", key))
+        db.getCollection(COL_ARTICLES)
+            .deleteOne(eq("name", key))
     }
 
     override fun getArticle(key: String) : Article {
-        val col = database.getCollection(COL_ARTICLES)
-        val doc = col.find(eq("name", key)).first() ?:
-                        return ErrorArticle("Article not found")
+        val doc = db.getCollection(COL_ARTICLES)
+                    .find(eq("name", key))
+                    .first() ?: return ErrorArticle("Article not found")
 
         val blocksDoc = doc["blocks"] as List<*>
         val blocks = mutableListOf<Block>()
@@ -91,9 +95,9 @@ class MongoDbStorage : Storage {
         for(b in blocksDoc) {
             b as Document
             when(b["type"]) {
-                "header" -> blocks.add(HeaderBlock(b["text"].toString()))
-                "text" -> blocks.add(TextBlock(b["text"].toString()))
-                "image" -> blocks.add(ImageBlock(b["src"].toString()))
+                "header" -> blocks.add(HeaderBlock(_id="${b["_id"]}", text="${b["text"]}"))
+                "text" -> blocks.add(TextBlock(_id="${b["_id"]}", text="${b["text"]}"))
+                "image" -> blocks.add(ImageBlock(_id="${b["_id"]}", src="${b["src"]}"))
             }
         }
 
@@ -107,8 +111,27 @@ class MongoDbStorage : Storage {
     }
 
     override fun getArticlesNames(type: SortType): List<String> {
-        return database.getCollection(COL_ARTICLES)
+        return db.getCollection(COL_ARTICLES)
                        .distinct("name", String::class.java)
                        .toList()
+    }
+
+    override fun addBlock(key: String, block: Block) : String {
+        val doc = blockDocument(block)
+        // add one element to array
+        val res = db.getCollection(COL_ARTICLES)
+            .updateOne(
+                eq("name", key),
+                Updates.addToSet("blocks", doc)
+            )
+        return res.upsertedId?.toString() ?: ""
+    }
+
+    override fun removeBlock(key: String, block: Block) {
+        db.getCollection(COL_ARTICLES)
+            .updateOne(
+                eq("name", key),
+                Updates.pullByFilter(eq("_id", block.id))
+            )
     }
 }

@@ -1,12 +1,17 @@
 package model
 
-import java.sql.Timestamp
-
 open class Article(name: String,
-                   val contentBlocks: List<Block> = listOf(),
+                   blocks: List<Block>,
                    val timestamp: Long = System.currentTimeMillis()) {
 
-    val articleHeader: HeaderBlock = HeaderBlock(name)
+    val articleHeader: HeaderBlock = HeaderBlock(text=name)
+    val contentBlocks: MutableList<Block> = mutableListOf()
+
+    init {
+        for(b in blocks) {
+            contentBlocks.add(b)
+        }
+    }
 
     override fun toString(): String {
         return "Article(contentBlocks=$contentBlocks, articleHeader=$articleHeader)"

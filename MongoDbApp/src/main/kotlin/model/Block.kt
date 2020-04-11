@@ -1,7 +1,14 @@
 package model
 
-interface Block
+abstract class Block(var id: String = "")
 
-data class HeaderBlock(val text: String, val size: Int = 1) : Block
-data class TextBlock(val text: String) : Block
-data class ImageBlock(val src: String) : Block
+data class HeaderBlock(val text: String = "",
+                       val size: Int = 1,
+                       val _id: String = "") : Block(_id)
+
+data class TextBlock(val text: String = "",
+                     val _id: String = "") : Block(_id)
+
+data class ImageBlock(val src: String = "",
+                      val _id: String = "") : Block(_id)
+

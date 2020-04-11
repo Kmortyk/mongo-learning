@@ -1,13 +1,14 @@
-import javafx.scene.control.DatePicker
+import controller.AppViewController
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.layout.Background
 import javafx.stage.Stage
+import model.HeaderBlock
+import model.ImageBlock
+import model.TextBlock
 import storage.MongoDbStorage
 import tornadofx.*
 import view.ArticleView
 import view.ArticlesListView
-import java.io.File
 
 
 class MongoDbView : View() {
@@ -20,6 +21,9 @@ class MongoDbView : View() {
 
     // selectable articles list
     private val articleList = ArticlesListView(articleView, storage)
+
+    // controller for actions
+    private val controller = AppViewController(articleView, storage)
 
     override val root = hbox {
 
@@ -34,9 +38,15 @@ class MongoDbView : View() {
                     paddingTop = 1
                     paddingBottom = 3
                 }
-                menu("", ImageView(imh))
-                menu("", ImageView(imt))
-                menu("", ImageView(imi))
+                menu(null, ImageView(imh)).action {
+                    controller.addBlock(HeaderBlock(text = "Awesome header"))
+                }
+                menu(null, ImageView(imt)).action {
+                    controller.addBlock(TextBlock(text = "Awesome text"))
+                }
+                menu(null, ImageView(imi)).action {
+                    controller.addBlock(ImageBlock(src = ""))
+                }
             }
             add(articleView)
         }
