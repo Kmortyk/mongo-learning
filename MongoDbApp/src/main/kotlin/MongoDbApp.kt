@@ -1,3 +1,4 @@
+import javafx.scene.control.DatePicker
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import storage.MongoDbStorage
@@ -27,6 +28,10 @@ class MongoDbView : View() {
         // left view
         vbox {
             menubar {
+                style {
+                    paddingTop = 1
+                    paddingBottom = 3
+                }
                 menu("", ImageView(imh))
                 menu("", ImageView(imt))
                 menu("", ImageView(imi))
@@ -35,7 +40,17 @@ class MongoDbView : View() {
         }
 
         // right view
-        add(articleList)
+        vbox {
+            hbox {
+                style{
+                    paddingLeft = 14
+                    paddingTop = 3
+                    paddingBottom = 3
+                }
+                datepicker()
+            }
+            add(articleList)
+        }
     }
 }
 

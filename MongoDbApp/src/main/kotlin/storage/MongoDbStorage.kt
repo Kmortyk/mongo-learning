@@ -70,6 +70,7 @@ class MongoDbStorage : Storage {
         }
 
         doc["name"] = article.articleHeader.text
+        doc["timestamp"] = article.timestamp
         doc["blocks"] = blocks
         col.insertOne(doc)
     }
@@ -96,7 +97,13 @@ class MongoDbStorage : Storage {
             }
         }
 
-        return Article(doc["name"].toString(), blocks)
+        // timestamp string
+        val tStr = doc["timestamp"].toString()
+        // conversion from scientific notation
+        val t = if(tStr == "null") { System.currentTimeMillis() }
+                else { tStr.toDouble().toLong() }
+
+        return Article(doc["name"].toString(), blocks, t)
     }
 
     override fun getArticlesNames(type: SortType): List<String> {
