@@ -9,6 +9,7 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates
 import model.*
 import org.bson.Document
+import org.bson.types.ObjectId
 
 
 class MongoDbStorage : Storage {
@@ -54,6 +55,8 @@ class MongoDbStorage : Storage {
                 block["src"] = b.src
             }
         }
+        // generate unique id for block
+        block["_id"] = ObjectId()
         return block
     }
 
