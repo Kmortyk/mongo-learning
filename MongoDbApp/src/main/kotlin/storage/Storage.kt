@@ -15,7 +15,7 @@ interface Storage {
     fun removeArticle(id: String)
 
     /* Articles */
-    fun getArticlesNames(type: SortType = SortType.BY_NAME) : List<String>
+    fun getArticleItems(type: SortType = SortType.BY_NAME) : List<ArticleListItem>
 
     /* Block */
     fun addBlock   (id: String, block: Block) : String // -> blockId

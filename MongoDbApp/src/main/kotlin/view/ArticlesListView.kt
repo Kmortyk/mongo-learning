@@ -9,6 +9,7 @@ import javafx.scene.control.TextInputDialog
 import javafx.scene.text.Text
 import javafx.util.Duration
 import model.EmptyArticle
+import storage.ArticleListItem
 import storage.SortType
 import storage.Storage
 import tornadofx.*
@@ -18,12 +19,18 @@ import view.ArticlesListCell.Companion.ITEM_REMOVE
 class ArticlesListView(private val articleView: ArticleView,
                        private val storage: Storage) : View() {
 
+    private var articleItems = listOf<ArticleListItem>()
+
+    init {
+        articleItems = storage.getArticleItems()
+    }
+
     override val root = listview<String> {
         setCellFactory { ArticlesListCell() }
         prefWidth = 224.0
         prefHeight = WIN_HEIGHT
 
-        items.addAll(storage.getArticlesNames())
+        items.addAll(getArticleNames())
         items.add(ITEM_ADD)
         selectionModel.selectionMode = SelectionMode.SINGLE
 
@@ -82,7 +89,15 @@ class ArticlesListView(private val articleView: ArticleView,
 
     fun updateNames(type: SortType = SortType.BY_NAME) {
         root.items.clear()
-        root.items.addAll(storage.getArticlesNames(type))
+        root.items.addAll(getArticleNames(type))
         root.items.add(ITEM_ADD)
+    }
+
+    private fun getArticleNames(type: SortType = SortType.BY_NAME) : List<String> {
+        val l = storage.getArticleItems(type)
+        val r = mutableListOf<String>()
+        for(a in l)
+            r.add(a.name)
+        return r
     }
 }

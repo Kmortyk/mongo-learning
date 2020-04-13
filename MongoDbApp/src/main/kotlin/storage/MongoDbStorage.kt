@@ -110,7 +110,7 @@ class MongoDbStorage : Storage {
         return Article(doc["_id"].toString(), doc["name"].toString(), blocks, t)
     }
 
-    override fun getArticlesNames(type: SortType): List<String> {
+    override fun getArticleItems(type: SortType): List<ArticleListItem> {
         val field = when(type) {
             SortType.BY_DATE -> Indexes.descending("timestamp")
             SortType.BY_NAME -> Indexes.ascending("name")
@@ -121,11 +121,15 @@ class MongoDbStorage : Storage {
             .sort(field)
             .into(ArrayList())
 
-        val names = mutableListOf<String>()
+        val names = mutableListOf<ArticleListItem>()
         for(doc in docs) {
-            names.add(doc["name"].toString())
+            names.add(
+                ArticleListItem(
+                    doc["name"].toString(),
+                    doc["timestamp"].toString()
+                )
+            )
         }
-
         return names
     }
 
