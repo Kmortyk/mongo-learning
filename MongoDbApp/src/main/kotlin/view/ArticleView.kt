@@ -76,7 +76,7 @@ class ArticleView(
                         selectedBlockIndex = i
                 }
 
-                println("\${article.articleHeader.id} == ${block.id}")
+                // println("\${article.articleHeader.id} == ${block.id}")
                 if(article.articleHeader.id == block.id)
                     selectedBlockIndex = -1
             }
