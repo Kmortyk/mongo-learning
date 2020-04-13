@@ -55,9 +55,8 @@ class ArticleController(): Controller() {
     private fun resizable(textArea: TextArea, startHeight: Double, perLine: Double) : TextArea {
         textArea.setPrefSize(200.0, 40.0)
         textArea.isWrapText = true
-        textArea.prefHeight = startHeight
-
-        var oldLines = 1
+        var oldLines = textArea.text.split('\n').size
+        textArea.prefHeight = startHeight + perLine * (oldLines-1)
 
         textArea.textProperty().addListener { _, _, _ ->
             val lines = textArea.text.split('\n').size

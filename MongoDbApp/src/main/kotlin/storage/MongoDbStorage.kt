@@ -143,8 +143,6 @@ class MongoDbStorage : Storage {
         if(key.isEmpty())
             return
 
-        println("Update: $key $block")
-
         val query = BasicDBObject()
         query["blocks._id"] = ObjectId(block.id)
         query["_id"] = ObjectId(key)

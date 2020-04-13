@@ -1,5 +1,6 @@
 package view
 
+import WIN_HEIGHT
 import controller.ArticleController
 import javafx.beans.value.ChangeListener
 import storage.Storage
@@ -11,7 +12,11 @@ class ArticleView(
     private val controller: ArticleController by inject()
     private var article: Article = HelloArticle()
 
-    private val layout = vbox { prefWidth = 600.0 }
+    private val layout = vbox {
+        prefWidth = 600.0
+        prefHeight = WIN_HEIGHT
+    }
+
     override val root = scrollpane { add(layout) }
     init { setArticle(article) }
 

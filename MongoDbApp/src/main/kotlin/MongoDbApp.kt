@@ -10,6 +10,7 @@ import model.HeaderBlock
 import model.ImageBlock
 import model.TextBlock
 import storage.MongoDbStorage
+import storage.SortType
 import tornadofx.*
 import view.ArticleView
 import view.ArticlesListView
@@ -19,14 +20,16 @@ import view.ArticlesListView
  * 1. Сортировка по дате в списке статей
  * 2. Сортировка по имени в списке статей (кнопка)
  * 3. Удаление блоков в статье (кнопка + функционал)
- * !!! 4. Обновление данных при обновление блока в базе данных
- * 5. Таблица картинок в базе данных (как сделать?)
- * 6. Блок-картинка
- * 7. Загрузка картинки с файловой системы в базу данных
- * 8. Сменить картинку правой кнопкой мыши при редактировании статьи
- * 9. Статьи в опредлённую дату (функционал)
- * 10. Отображение даты в списке статей
+ * 4. Таблица картинок в базе данных (как сделать?)
+ * 5. Статьи в опредлённую дату (функционал)
+ * 6. Отображение даты в списке статей
+ *
+ * 7. Отображение картинки в блоке
+ * 8. Загрузка картинки с файловой системы в базу данных
+ * 9. Сменить картинку правой кнопкой мыши при редактировании статьи
  * */
+
+const val WIN_HEIGHT = 600.0
 
 class MongoDbView : View() {
 
@@ -85,6 +88,17 @@ class MongoDbView : View() {
                 datepicker() {
                     promptText = "Enter query..."
                 }
+                button {
+                    val sorts = listOf(SortType.BY_NAME, SortType.BY_DATE)
+                    var cur = 0
+
+                    graphic = ImageView(Image("sort.png", ICON_SIZE, ICON_SIZE, false, ICON_SMOOTH))
+
+                    action {
+                        cur = (cur + 1) % sorts.size
+                        articleList.updateNames(sorts[cur])
+                    }
+                }
             }
             style = "-fx-background-color: #ffffff;"
             add(articleList)
@@ -107,6 +121,7 @@ class MongoDbView : View() {
 class MongoDbApp : App(MongoDbView::class) {
     override fun start(stage: Stage) {
         stage.isResizable = false
+        stage.height = WIN_HEIGHT
         super.start(stage)
     }
 }

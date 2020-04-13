@@ -1,5 +1,6 @@
 package view
 
+import WIN_HEIGHT
 import javafx.collections.ObservableList
 import javafx.event.EventHandler
 import javafx.scene.control.Alert
@@ -8,6 +9,7 @@ import javafx.scene.control.TextInputDialog
 import javafx.scene.text.Text
 import javafx.util.Duration
 import model.EmptyArticle
+import storage.SortType
 import storage.Storage
 import tornadofx.*
 import view.ArticlesListCell.Companion.ITEM_ADD
@@ -19,6 +21,7 @@ class ArticlesListView(private val articleView: ArticleView,
     override val root = listview<String> {
         setCellFactory { ArticlesListCell() }
         prefWidth = 224.0
+        prefHeight = WIN_HEIGHT
 
         items.addAll(storage.getArticlesNames())
         items.add(ITEM_ADD)
@@ -51,11 +54,9 @@ class ArticlesListView(private val articleView: ArticleView,
         // select first article
         if(items.size > 0) {
             runLater(Duration.millis(250.0)) {
-                selectionModel.select(0)
-                focusModel.focus(0)
-                articleView.setArticle(
-                    storage.getArticle(items[0])
-                )
+                // selectionModel.select(0)
+                // focusModel.focus(0)
+                articleView.setArticle(storage.getArticle(items[0]))
             }
         }
     }
@@ -77,5 +78,11 @@ class ArticlesListView(private val articleView: ArticleView,
                 items.add(items.size-1, it)
             }
         }
+    }
+
+    fun updateNames(type: SortType = SortType.BY_NAME) {
+        root.items.clear()
+        root.items.addAll(storage.getArticlesNames(type))
+        root.items.add(ITEM_ADD)
     }
 }
