@@ -94,7 +94,9 @@ class ArticleView(
     }
 
     fun removeSelectedBlock() {
-        if(layoutSelectedIndex() > 0) // not header
+        if(layoutSelectedIndex() > 0) { // not header
             layout.children.removeAt(layoutSelectedIndex())
+            article.contentBlocks.removeAt(selectedBlockIndex())
+        }
     }
 }

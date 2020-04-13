@@ -149,8 +149,10 @@ class MongoDbStorage : Storage {
     }
 
     override fun removeBlock(id: String, block: Block) {
-        if(block.id.isEmpty())
+        if(block.id.isEmpty()) {
+            println("[ERROR] attempt to remove block with empty id")
             return
+        }
 
         val filter = Document("_id", ObjectId(id))
         val update = Document("\$pull", Document("blocks", Document("_id", ObjectId(block.id))))

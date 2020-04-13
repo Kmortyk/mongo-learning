@@ -71,6 +71,7 @@ class MongoDbView : View() {
                     controller.addBlock(ImageBlock(src=""))
                 })
                 actionable(menu(null, imd), EventHandler {
+                    println(articleView.selectedBlockIndex())
                     val block = articleView.selectedBlock()
                     articleView.removeSelectedBlock()
                     storage.removeBlock(articleView.articleKey(), block)

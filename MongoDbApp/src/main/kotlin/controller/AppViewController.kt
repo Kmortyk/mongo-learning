@@ -10,9 +10,8 @@ class AppViewController(private val articleView: ArticleView,
 
     fun addBlock(b: Block) {
         // insert block to db and get it's key
-        b.id = storage.addBlock(
-            articleView.articleKey(), b,
-            articleView.selectedBlockIndex())
+        b.id = storage.addBlock(articleView.articleKey(), b,
+            articleView.selectedBlockIndex() + 1) // next to it
         // insert block into the view
         articleView.addBlock(b)
     }
