@@ -1,13 +1,11 @@
 package controller
 
-import javafx.geometry.Insets
+import javafx.beans.value.ChangeListener
 import javafx.geometry.Pos
 import javafx.scene.control.TextArea
 import javafx.scene.image.Image
 import javafx.scene.layout.StackPane
-import javafx.scene.paint.Color
 import javafx.scene.text.FontWeight
-import storage.Storage
 import tornadofx.*
 
 
@@ -23,9 +21,9 @@ class ArticleController(): Controller() {
         const val TEXT_LINE_STEP = 16.0
     }
 
-    fun header(text: String, size: Int = 1) : StackPane {
+    fun header(text: String, l: ChangeListener<String>, size: Int = 1) : StackPane {
         return StackPane().apply {
-            resizable(textarea (text) {
+            handler(resizable(textarea (text) {
                 minHeight = 24.0
                 isWrapText = true
                 alignment = Pos.BASELINE_LEFT
@@ -34,21 +32,21 @@ class ArticleController(): Controller() {
                     fontWeight = FontWeight.BOLD
                 }
             }, HEADER_START_HEIGHT - size * HEADER_STEP,
-                  HEADER_LINE_STEP - size * HEADER_STEP)
+                  HEADER_LINE_STEP - size * HEADER_STEP), l)
         }
     }
 
-    fun text(text: String): StackPane {
+    fun text(text: String, l: ChangeListener<String>): StackPane {
         return StackPane().apply {
-            resizable(textarea (text) {
+            handler(resizable(textarea (text) {
                 minHeight = 24.0
                 isWrapText = true
                 alignment = Pos.BASELINE_LEFT
-            }, TEXT_START_HEIGHT, TEXT_LINE_STEP)
+            }, TEXT_START_HEIGHT, TEXT_LINE_STEP), l)
         }
     }
 
-    fun image(image: Image) : StackPane {
+    fun image(image: Image, l: ChangeListener<String>) : StackPane {
         return StackPane().apply {
             imageview(image) { }
         }
@@ -72,7 +70,8 @@ class ArticleController(): Controller() {
         return textArea
     }
 
-    private fun live(textArea: TextArea) {
-
+    private fun handler(textArea: TextArea, l: ChangeListener<String>) : TextArea {
+        textArea.textProperty().addListener(l)
+        return textArea
     }
 }

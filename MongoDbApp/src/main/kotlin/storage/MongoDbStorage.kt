@@ -1,5 +1,6 @@
 package storage
 
+import com.mongodb.BasicDBObject
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
@@ -110,7 +111,7 @@ class MongoDbStorage : Storage {
         val t = if(tStr == "null") { System.currentTimeMillis() }
                 else { tStr.toDouble().toLong() }
 
-        return Article(doc["name"].toString(), blocks, t)
+        return Article(doc["_id"].toString(), doc["name"].toString(), blocks, t)
     }
 
     override fun getArticlesNames(type: SortType): List<String> {
@@ -124,7 +125,7 @@ class MongoDbStorage : Storage {
         // add one element to array
         val res = db.getCollection(COL_ARTICLES)
             .updateOne(
-                eq("name", key),
+                eq("_id", ObjectId(key)),
                 Updates.addToSet("blocks", doc)
             )
         return res.upsertedId?.toString() ?: ""
@@ -133,8 +134,41 @@ class MongoDbStorage : Storage {
     override fun removeBlock(key: String, block: Block) {
         db.getCollection(COL_ARTICLES)
             .updateOne(
-                eq("name", key),
+                eq("_id", ObjectId(key)),
                 Updates.pullByFilter(eq("_id", block.id))
             )
+    }
+
+    override fun updateBlock(key: String, block: Block) {
+        if(key.isEmpty())
+            return
+
+        println("Update: $key $block")
+
+        val query = BasicDBObject()
+        query["blocks._id"] = ObjectId(block.id)
+        query["_id"] = ObjectId(key)
+
+        val data = BasicDBObject()
+        when (block) {
+            is HeaderBlock -> {
+                data["blocks.\$.type"] = "header"
+                data["blocks.\$.text"] = block.text
+            }
+            is TextBlock -> {
+                data["blocks.\$.type"] = "text"
+                data["blocks.\$.text"] = block.text
+            }
+            is ImageBlock -> {
+                data["blocks.\$.type"] = "image"
+                data["blocks.\$.src"] = block.src
+            }
+        }
+
+        val command = BasicDBObject()
+        command["\$set"] = data
+
+        db.getCollection(COL_ARTICLES)
+            .updateOne(query, command)
     }
 }

@@ -1,6 +1,9 @@
 package model
 
-open class Article(name: String,
+const val EMPTY_ID = ""
+
+open class Article(public val id: String,
+                   name: String,
                    blocks: List<Block>,
                    val timestamp: Long = System.currentTimeMillis()) {
 
@@ -19,8 +22,7 @@ open class Article(name: String,
 }
 
 /* Default greetings article */
-class HelloArticle : Article (
-    "Hello, ideas!",
+class HelloArticle : Article (EMPTY_ID, "Hello, ideas!",
     listOf(
         HeaderBlock("Hello world article", size = 3),
         TextBlock("In such difficult times"),
@@ -30,15 +32,13 @@ class HelloArticle : Article (
 )
 
 /* Default error article */
-class ErrorArticle(errText: String) : Article (
-    errText,
+class ErrorArticle(errText: String) : Article (EMPTY_ID, errText,
     listOf(
         TextBlock("=(")
     )
 )
 
 /* Default empty article */
-class EmptyArticle(text: String) : Article (
-    text,
+class EmptyArticle(text: String) : Article (EMPTY_ID, text,
     listOf()
 )

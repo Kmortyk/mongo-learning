@@ -8,14 +8,18 @@ enum class SortType {
 }
 
 interface Storage {
+
     /* Article */
-    fun putArticle(key: String, article: Article)
+    fun putArticle   (key: String, article: Article)
+    fun getArticle   (key: String) : Article
     fun removeArticle(key: String)
 
-    fun getArticle(key: String) : Article
+    /* Articles */
     fun getArticlesNames(type: SortType = SortType.BY_NAME) : List<String>
 
-    fun addBlock(key: String, block: Block) : String
+    /* Block */
+    fun addBlock   (key: String, block: Block) : String
+    fun updateBlock(key: String, block: Block)
     fun removeBlock(key: String, block: Block)
 
     /* Image */

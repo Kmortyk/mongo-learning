@@ -38,7 +38,8 @@ class ArticlesListView(private val articleView: ArticleView,
                 if(cur == ITEM_ADD) {
                     selectionModel.clearSelection()
                     addItem(items)
-                    cur = items[items.size - 2]
+                    if(items.size > 1)
+                        cur = items[items.size - 2]
                 }
 
                 articleView.setArticle(
