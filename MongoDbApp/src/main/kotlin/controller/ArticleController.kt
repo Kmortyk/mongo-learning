@@ -5,11 +5,13 @@ import javafx.geometry.Pos
 import javafx.scene.control.TextArea
 import javafx.scene.image.Image
 import javafx.scene.layout.StackPane
+import javafx.scene.paint.Color
 import javafx.scene.text.FontWeight
+import storage.Storage
 import tornadofx.*
 
 
-class ArticleController: Controller() {
+class ArticleController(): Controller() {
 
     companion object {
         const val HEADER_STEP = 3.0
@@ -57,15 +59,20 @@ class ArticleController: Controller() {
         textArea.isWrapText = true
         textArea.prefHeight = startHeight
 
-        var oldLines = 0
+        var oldLines = 1
 
         textArea.textProperty().addListener { _, _, _ ->
             val lines = textArea.text.split('\n').size
             if (oldLines != lines) {
+                val delta = lines - oldLines
                 oldLines = lines
-                textArea.prefHeight = textArea.layoutBounds.height + perLine
+                textArea.prefHeight = textArea.layoutBounds.height + perLine * delta
             }
         }
         return textArea
+    }
+
+    private fun live(textArea: TextArea) {
+
     }
 }

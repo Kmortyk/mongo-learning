@@ -19,7 +19,7 @@ import view.ArticlesListView
  * 1. Сортировка по дате в списке статей
  * 2. Сортировка по имени в списке статей (кнопка)
  * 3. Удаление блоков в статье (кнопка + функционал)
- * 4. Обновление данных при обновление блока в базе данных
+ * !!! 4. Обновление данных при обновление блока в базе данных
  * 5. Таблица картинок в базе данных (как сделать?)
  * 6. Блок-картинка
  * 7. Загрузка картинки с файловой системы в базу данных
@@ -39,7 +39,7 @@ class MongoDbView : View() {
     private val storage = MongoDbStorage()
 
     // current article view
-    private val articleView = ArticleView()
+    private val articleView = ArticleView(storage)
 
     // selectable articles list
     private val articleList = ArticlesListView(articleView, storage)

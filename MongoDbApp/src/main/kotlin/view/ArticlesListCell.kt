@@ -14,7 +14,7 @@ internal class ArticlesListCell : ListCell<String?>() {
         const val ITEM_REMOVE = "d"
         const val ITEM_ADD = "+"
 
-        private const val FX_GREY_BACKGROUND = "-fx-background-color: #d3d3d3;"
+        private const val FX_GREY_BACKGROUND = "-fx-background-color: #ffffff;"
         private const val FX_PADDING = "-fx-padding: 4;"
     }
 

@@ -2,9 +2,11 @@ package view
 
 import controller.ArticleController
 import model.*
+import storage.Storage
 import tornadofx.*
 
-class ArticleView : View() {
+class ArticleView(
+    private val storage: Storage) : View() {
     private val controller: ArticleController by inject()
     private var article: Article = HelloArticle()
 
