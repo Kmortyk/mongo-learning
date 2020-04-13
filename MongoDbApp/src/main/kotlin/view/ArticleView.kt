@@ -74,7 +74,7 @@ class ArticleView(
             run {
                 for(i in 0 until article.contentBlocks.size) {
                     if(article.contentBlocks[i].id == block.id)
-                        selectedBlock = i + 1 // one for header
+                        selectedBlock = i // one for header
                 }
             }
         }
@@ -85,6 +85,6 @@ class ArticleView(
     }
 
     fun removeSelectedBlock() {
-        layout.children.removeAt(selectedBlock)
+        layout.children.removeAt(selectedBlock + 1) // one for header
     }
 }
