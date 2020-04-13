@@ -7,10 +7,12 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Indexes
 import com.mongodb.client.model.Updates
 import model.*
 import org.bson.Document
 import org.bson.types.ObjectId
+import java.util.*
 
 
 class MongoDbStorage : Storage {
@@ -61,15 +63,9 @@ class MongoDbStorage : Storage {
         return block
     }
 
-    /* fixme --- debug ---------------------------------------------------------------------------------------------- */
-
-    public fun showDatabases() {
-        client.listDatabaseNames().forEach(::println)
-    }
-
     /* --- Implementation ------------------------------------------------------------------------------------------- */
 
-    override fun putArticle(key: String, article: Article) {
+    override fun putArticle(article: Article) {
         val col = db.getCollection(COL_ARTICLES)
         val doc = Document()
         val blocks = mutableListOf<Document>()
@@ -83,14 +79,14 @@ class MongoDbStorage : Storage {
         col.insertOne(doc)
     }
 
-    override fun removeArticle(key: String) {
+    override fun removeArticle(id: String) {
         db.getCollection(COL_ARTICLES)
-            .deleteOne(eq("name", key))
+            .deleteOne(eq("_id", ObjectId(id)))
     }
 
-    override fun getArticle(key: String) : Article {
+    override fun getArticleByName(name: String) : Article {
         val doc = db.getCollection(COL_ARTICLES)
-                    .find(eq("name", key))
+                    .find(eq("name", name))
                     .first() ?: return ErrorArticle("Article not found")
 
         val blocksDoc = doc["blocks"] as List<*>
@@ -115,37 +111,49 @@ class MongoDbStorage : Storage {
     }
 
     override fun getArticlesNames(type: SortType): List<String> {
-        return db.getCollection(COL_ARTICLES)
-                       .distinct("name", String::class.java)
-                       .toList()
+        val field = when(type) {
+            SortType.BY_DATE -> Indexes.descending("timestamp")
+            SortType.BY_NAME -> Indexes.ascending("name")
+        }
+
+        val docs: List<Document> = db.getCollection(COL_ARTICLES)
+            .find()
+            .sort(field)
+            .into(ArrayList())
+
+        val names = mutableListOf<String>()
+        for(doc in docs) {
+            names.add(doc["name"].toString())
+        }
+
+        return names
     }
 
-    override fun addBlock(key: String, block: Block) : String {
+    override fun addBlock(id: String, block: Block) : String {
         val doc = blockDocument(block)
         // add one element to array
-        val res = db.getCollection(COL_ARTICLES)
-            .updateOne(
-                eq("_id", ObjectId(key)),
-                Updates.addToSet("blocks", doc)
-            )
-        return res.upsertedId?.toString() ?: ""
-    }
-
-    override fun removeBlock(key: String, block: Block) {
         db.getCollection(COL_ARTICLES)
             .updateOne(
-                eq("_id", ObjectId(key)),
-                Updates.pullByFilter(eq("_id", block.id))
+                eq("_id", ObjectId(id)),
+                Updates.addToSet("blocks", doc)
             )
+        return doc["_id"].toString()
     }
 
-    override fun updateBlock(key: String, block: Block) {
-        if(key.isEmpty())
+    override fun removeBlock(id: String, block: Block) {
+        val filter = Document("_id", ObjectId(id))
+        val update = Document("\$pull", Document("blocks", Document("_id", ObjectId(block.id))))
+
+        db.getCollection(COL_ARTICLES).updateOne(filter, update)
+    }
+
+    override fun updateBlock(id: String, block: Block) {
+        if(id.isEmpty())
             return
 
         val query = BasicDBObject()
         query["blocks._id"] = ObjectId(block.id)
-        query["_id"] = ObjectId(key)
+        query["_id"] = ObjectId(id)
 
         val data = BasicDBObject()
         when (block) {

@@ -2,6 +2,7 @@ package controller
 
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Pos
+import javafx.scene.Node
 import javafx.scene.control.TextArea
 import javafx.scene.image.Image
 import javafx.scene.layout.StackPane
@@ -21,9 +22,9 @@ class ArticleController(): Controller() {
         const val TEXT_LINE_STEP = 16.0
     }
 
-    fun header(text: String, l: ChangeListener<String>, size: Int = 1) : StackPane {
+    fun header(text: String, l: ChangeListener<String>, f: ChangeListener<Boolean>, size: Int = 1) : StackPane {
         return StackPane().apply {
-            handler(resizable(textarea (text) {
+            focus(handler(resizable(textarea (text) {
                 minHeight = 24.0
                 isWrapText = true
                 alignment = Pos.BASELINE_LEFT
@@ -32,23 +33,23 @@ class ArticleController(): Controller() {
                     fontWeight = FontWeight.BOLD
                 }
             }, HEADER_START_HEIGHT - size * HEADER_STEP,
-                  HEADER_LINE_STEP - size * HEADER_STEP), l)
+                  HEADER_LINE_STEP - size * HEADER_STEP), l), f)
         }
     }
 
-    fun text(text: String, l: ChangeListener<String>): StackPane {
+    fun text(text: String, l: ChangeListener<String>, f: ChangeListener<Boolean>): StackPane {
         return StackPane().apply {
-            handler(resizable(textarea (text) {
+            focus(handler(resizable(textarea (text) {
                 minHeight = 24.0
                 isWrapText = true
                 alignment = Pos.BASELINE_LEFT
-            }, TEXT_START_HEIGHT, TEXT_LINE_STEP), l)
+            }, TEXT_START_HEIGHT, TEXT_LINE_STEP), l), f)
         }
     }
 
-    fun image(image: Image, l: ChangeListener<String>) : StackPane {
+    fun image(image: Image, f: ChangeListener<Boolean>) : StackPane {
         return StackPane().apply {
-            imageview(image) { }
+            focus(imageview(image) {}, f)
         }
     }
 
@@ -73,4 +74,10 @@ class ArticleController(): Controller() {
         textArea.textProperty().addListener(l)
         return textArea
     }
+
+    private fun focus(node: Node, l: ChangeListener<Boolean>) : Node {
+        node.focusedProperty().addListener(l)
+        return node
+    }
+
 }

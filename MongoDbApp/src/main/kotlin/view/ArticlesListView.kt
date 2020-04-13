@@ -46,7 +46,7 @@ class ArticlesListView(private val articleView: ArticleView,
                 }
 
                 articleView.setArticle(
-                    storage.getArticle(cur.toString())
+                    storage.getArticleByName(cur.toString())
                 )
             }
         }
@@ -56,7 +56,7 @@ class ArticlesListView(private val articleView: ArticleView,
             runLater(Duration.millis(250.0)) {
                 // selectionModel.select(0)
                 // focusModel.focus(0)
-                articleView.setArticle(storage.getArticle(items[0]))
+                articleView.setArticle(storage.getArticleByName(items[0]))
             }
         }
     }
@@ -74,7 +74,7 @@ class ArticlesListView(private val articleView: ArticleView,
                 return@ifPresent
             }
             if(it.isNotEmpty()) { // add new
-                storage.putArticle(it, EmptyArticle(it))
+                storage.putArticle(EmptyArticle(it))
                 items.add(items.size-1, it)
             }
         }

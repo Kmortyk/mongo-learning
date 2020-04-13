@@ -17,12 +17,11 @@ import view.ArticlesListView
 
 /**
  * TODO
- * 1. Сортировка по дате в списке статей
- * 2. Сортировка по имени в списке статей (кнопка)
  * 3. Удаление блоков в статье (кнопка + функционал)
  * 4. Таблица картинок в базе данных (как сделать?)
  * 5. Статьи в опредлённую дату (функционал)
  * 6. Отображение даты в списке статей
+ * 7. in-place добавление блока
  *
  * 7. Отображение картинки в блоке
  * 8. Загрузка картинки с файловой системы в базу данных
@@ -55,6 +54,7 @@ class MongoDbView : View() {
         val imh = ImageView(Image("header.png", ICON_SIZE, ICON_SIZE, false, ICON_SMOOTH))
         val imt = ImageView(Image("text.png",ICON_SIZE, ICON_SIZE, false, ICON_SMOOTH))
         val imi = ImageView(Image("image.png",ICON_SIZE, ICON_SIZE, false, ICON_SMOOTH))
+        val imd = ImageView(Image("del.png",ICON_SIZE, ICON_SIZE, false, ICON_SMOOTH))
 
         // left view
         vbox {
@@ -72,6 +72,11 @@ class MongoDbView : View() {
                 })
                 actionable(menu(null, imi), EventHandler {
                     controller.addBlock(ImageBlock(src=""))
+                })
+                actionable(menu(null, imd), EventHandler {
+                    val block = articleView.selectedBlock()
+                    articleView.removeSelectedBlock()
+                    storage.removeBlock(articleView.articleKey(), block)
                 })
             }
             add(articleView)
