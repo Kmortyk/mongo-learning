@@ -94,4 +94,18 @@ class ArticlesListView(private val articleView: ArticleView,
         root.items.addAll(storage.getArticleItems(type))
         root.items.add(ITEM_ADD)
     }
+
+    fun findArticles(value: String?) {
+        if(value == null) return
+        val found = mutableListOf<ArticleListItem>()
+
+        for(article in articleItems) {
+            if(article.name.contains(value) || article.date.contains(value))
+                found.add(article)
+        }
+
+        root.items.clear()
+        root.items.addAll(found)
+        root.items.add(ITEM_ADD)
+    }
 }

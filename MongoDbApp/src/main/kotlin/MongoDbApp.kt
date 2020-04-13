@@ -17,7 +17,6 @@ import view.ArticlesListView
 
 /**
  * TODO
- * 1. Статьи в опредлённую дату (функционал)
  * 3. in-place добавление блока
  *
  * 4. Таблица картинок в базе данных (как сделать?)
@@ -88,9 +87,13 @@ class MongoDbView : View() {
                     paddingTop = 3
                     paddingBottom = 3
                 }
-                datepicker() {
+                val dataPicker = datepicker {
                     promptText = "Enter query..."
+                    editor.textProperty().addListener { _, _, newValue -> run {
+                        articleList.findArticles(newValue)
+                    }}
                 }
+                add(dataPicker)
                 button {
                     val sorts = listOf(SortType.BY_NAME, SortType.BY_DATE)
                     var cur = 0
@@ -100,6 +103,7 @@ class MongoDbView : View() {
                     action {
                         cur = (cur + 1) % sorts.size
                         articleList.updateNames(sorts[cur])
+                        dataPicker.editor.clear()
                     }
                 }
             }
