@@ -18,7 +18,7 @@ interface Storage {
     fun getArticleItems(type: SortType = SortType.BY_NAME) : List<ArticleListItem>
 
     /* Block */
-    fun addBlock   (id: String, block: Block) : String // -> blockId
+    fun addBlock   (id: String, block: Block, position: Int = -1) : String // -> blockId
     fun updateBlock(id: String, block: Block)
     fun removeBlock(id: String, block: Block)
 

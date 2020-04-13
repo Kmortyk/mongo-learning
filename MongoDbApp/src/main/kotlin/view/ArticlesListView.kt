@@ -53,7 +53,7 @@ class ArticlesListView(private val articleView: ArticleView,
                 }
 
                 articleView.setArticle(
-                    storage.getArticleByName(cur.toString())
+                    storage.getArticleByName(cur.name)
                 )
             }
         }

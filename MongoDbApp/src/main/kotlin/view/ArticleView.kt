@@ -11,7 +11,7 @@ class ArticleView(
     private val storage: Storage) : View() {
     private val controller: ArticleController by inject()
     private var article: Article = HelloArticle()
-    private var selectedBlock = -1
+    private var selectedBlockIndex = -1
 
     private val layout = vbox {
         prefWidth = 600.0
@@ -28,17 +28,16 @@ class ArticleView(
         // add header
         layout.add(controller.header(article.articleHeader.text,
             handler(article.articleHeader),
-            // can't delete header
-            ChangeListener<Boolean> { _, _, _ -> run {} }))
+            focusHandler(article.articleHeader)))
         // add content blocks
-        for(b in article.contentBlocks)
-            addLayoutBlock(b)
+        for(i in 0 until article.contentBlocks.size) // first - header
+            addLayoutBlock(i + 1, article.contentBlocks[i])
     }
 
     // add new block
     fun addBlock(block: Block) {
-        article.contentBlocks.add(block)
-        addLayoutBlock(block)
+        article.contentBlocks.add(selectedBlockIndex() + 1, block) // next to this
+        addLayoutBlock(layoutSelectedIndex() + 1, block) // next to this at layout
     }
 
     // get article unique key
@@ -47,12 +46,12 @@ class ArticleView(
     }
 
     // add existing block to the layout
-    private fun addLayoutBlock(block: Block) {
+    private fun addLayoutBlock(index: Int, block: Block) {
         when (block) {
-            is HeaderBlock -> layout.add(controller.header(block.text,
-                handler(block), focusHandler(block), size=block.size))
-            is TextBlock   -> layout.add(controller.text(block.text,
-                handler(block), focusHandler(block)))
+            is HeaderBlock -> layout.children.add(index,
+                controller.header(block.text, handler(block), focusHandler(block), size=block.size))
+            is TextBlock   -> layout.children.add(index,
+                controller.text(block.text, handler(block), focusHandler(block)))
             // is ImageBlock  -> root.add(controller.image(b.image))
         }
     }
@@ -74,17 +73,28 @@ class ArticleView(
             run {
                 for(i in 0 until article.contentBlocks.size) {
                     if(article.contentBlocks[i].id == block.id)
-                        selectedBlock = i // one for header
+                        selectedBlockIndex = i
                 }
+
+                println("\${article.articleHeader.id} == ${block.id}")
+                if(article.articleHeader.id == block.id)
+                    selectedBlockIndex = -1
             }
         }
     }
 
+    fun selectedBlockIndex(): Int { return selectedBlockIndex }
+
+    private fun layoutSelectedIndex(): Int { return selectedBlockIndex + 1 /* for header */ }
+
     fun selectedBlock(): Block {
-        return article.contentBlocks[selectedBlock]
+        if(selectedBlockIndex() < 0)
+            return article.articleHeader
+        return article.contentBlocks[selectedBlockIndex()]
     }
 
     fun removeSelectedBlock() {
-        layout.children.removeAt(selectedBlock + 1) // one for header
+        if(layoutSelectedIndex() > 0) // not header
+            layout.children.removeAt(layoutSelectedIndex())
     }
 }

@@ -8,6 +8,7 @@ import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Indexes
+import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
 import model.*
 import org.bson.Document
@@ -133,18 +134,24 @@ class MongoDbStorage : Storage {
         return names
     }
 
-    override fun addBlock(id: String, block: Block) : String {
-        val doc = blockDocument(block)
+    override fun addBlock(id: String, block: Block, position: Int) : String {
+        val blockDoc = blockDocument(block) // the one =)
+        var doc = Document().append("\$each", listOf(blockDoc))
+        if(position > 0)
+            doc = doc.append("\$position", position)
+
+        val push = Document().append("\$push", Document().append("blocks", doc))
+        val query = Document().append("_id", ObjectId(id))
         // add one element to array
-        db.getCollection(COL_ARTICLES)
-            .updateOne(
-                eq("_id", ObjectId(id)),
-                Updates.addToSet("blocks", doc)
-            )
-        return doc["_id"].toString()
+        db.getCollection(COL_ARTICLES).updateOne(query, push)
+
+        return blockDoc["_id"].toString()
     }
 
     override fun removeBlock(id: String, block: Block) {
+        if(block.id.isEmpty())
+            return
+
         val filter = Document("_id", ObjectId(id))
         val update = Document("\$pull", Document("blocks", Document("_id", ObjectId(block.id))))
 
