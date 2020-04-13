@@ -5,20 +5,21 @@ import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.ListCell
 import javafx.scene.layout.*
+import storage.ArticleListItem
 import tornadofx.add
 import tornadofx.box
 import tornadofx.px
 
-internal class ArticlesListCell : ListCell<String?>() {
+internal class ArticlesListCell : ListCell<ArticleListItem?>() {
     companion object{
         const val ITEM_REMOVE = "d"
-        const val ITEM_ADD = "+"
+        val ITEM_ADD = ArticleListItem("+", 0)
 
         private const val FX_GREY_BACKGROUND = "-fx-background-color: #ffffff;"
         private const val FX_PADDING = "-fx-padding: 4;"
     }
 
-    override fun updateItem(item: String?, empty: Boolean) {
+    override fun updateItem(item: ArticleListItem?, empty: Boolean) {
         super.updateItem(item, empty)
         if (empty || item == null) {
             text = ""
@@ -28,7 +29,7 @@ internal class ArticlesListCell : ListCell<String?>() {
             // layouts
             val left = HBox()
             val right = HBox()
-            val label = Label(item)
+            val label = Label(item.name)
             // empty region
             val reg = Region()
             HBox.setHgrow(reg, Priority.ALWAYS)

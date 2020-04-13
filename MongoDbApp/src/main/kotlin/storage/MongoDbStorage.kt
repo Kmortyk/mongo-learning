@@ -79,9 +79,9 @@ class MongoDbStorage : Storage {
         col.insertOne(doc)
     }
 
-    override fun removeArticle(id: String) {
+    override fun removeArticleByName(name: String) {
         db.getCollection(COL_ARTICLES)
-            .deleteOne(eq("_id", ObjectId(id)))
+            .deleteOne(eq("name", name))
     }
 
     override fun getArticleByName(name: String) : Article {
@@ -125,8 +125,8 @@ class MongoDbStorage : Storage {
         for(doc in docs) {
             names.add(
                 ArticleListItem(
-                    doc["name"].toString(),
-                    doc["timestamp"].toString()
+                    doc["name"].toString(), // wat
+                    doc["timestamp"].toString().toLong()
                 )
             )
         }

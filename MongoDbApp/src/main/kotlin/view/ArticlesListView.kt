@@ -25,12 +25,12 @@ class ArticlesListView(private val articleView: ArticleView,
         articleItems = storage.getArticleItems()
     }
 
-    override val root = listview<String> {
+    override val root = listview<ArticleListItem> {
         setCellFactory { ArticlesListCell() }
         prefWidth = 224.0
         prefHeight = WIN_HEIGHT
 
-        items.addAll(getArticleNames())
+        items.addAll(storage.getArticleItems())
         items.add(ITEM_ADD)
         selectionModel.selectionMode = SelectionMode.SINGLE
 
@@ -43,7 +43,7 @@ class ArticlesListView(private val articleView: ArticleView,
             if(n is Text && n.text == ITEM_REMOVE) {
                 // remove item
                 items.remove(cur)
-                storage.removeArticle(cur)
+                storage.removeArticleByName(cur.name)
             } else {
                 if(cur == ITEM_ADD) {
                     selectionModel.clearSelection()
@@ -63,12 +63,12 @@ class ArticlesListView(private val articleView: ArticleView,
             runLater(Duration.millis(250.0)) {
                 // selectionModel.select(0)
                 // focusModel.focus(0)
-                articleView.setArticle(storage.getArticleByName(items[0]))
+                articleView.setArticle(storage.getArticleByName(items[0].name))
             }
         }
     }
 
-    private fun addItem(items: ObservableList<String>) {
+    private fun addItem(items: ObservableList<ArticleListItem>) {
         val dlg = TextInputDialog()
         dlg.title = "New article"
         dlg.headerText = "Article name:"
@@ -76,28 +76,22 @@ class ArticlesListView(private val articleView: ArticleView,
 
         val result = dlg.showAndWait()
         result.ifPresent {
-            if(items.contains(it)) { // if exists
-                alert(Alert.AlertType.WARNING, "Article exists.")
-                return@ifPresent
-            }
+            for(itm in items) // if article with name exists fixme not necessary?
+                if(itm.name == it) {
+                    alert(Alert.AlertType.WARNING, "Article exists.")
+                    return@ifPresent
+                }
+
             if(it.isNotEmpty()) { // add new
                 storage.putArticle(EmptyArticle(it))
-                items.add(items.size-1, it)
+                items.add(items.size-1, ArticleListItem(it, System.currentTimeMillis()))
             }
         }
     }
 
     fun updateNames(type: SortType = SortType.BY_NAME) {
         root.items.clear()
-        root.items.addAll(getArticleNames(type))
+        root.items.addAll(storage.getArticleItems(type))
         root.items.add(ITEM_ADD)
-    }
-
-    private fun getArticleNames(type: SortType = SortType.BY_NAME) : List<String> {
-        val l = storage.getArticleItems(type)
-        val r = mutableListOf<String>()
-        for(a in l)
-            r.add(a.name)
-        return r
     }
 }
