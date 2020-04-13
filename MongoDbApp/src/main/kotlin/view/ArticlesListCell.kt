@@ -4,11 +4,14 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.ListCell
-import javafx.scene.layout.*
+import javafx.scene.control.Tooltip
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
+import javafx.scene.layout.Region
+import javafx.util.Duration
 import storage.ArticleListItem
+import tornadofx.ChangeListener
 import tornadofx.add
-import tornadofx.box
-import tornadofx.px
 
 internal class ArticlesListCell : ListCell<ArticleListItem?>() {
     companion object{
@@ -33,6 +36,10 @@ internal class ArticlesListCell : ListCell<ArticleListItem?>() {
             // empty region
             val reg = Region()
             HBox.setHgrow(reg, Priority.ALWAYS)
+            // set mouse hover property
+            val tooltip = Tooltip(item.date)
+            tooltip.showDelay = Duration.ZERO
+            label.tooltip = tooltip
 
             left.alignment = Pos.BASELINE_LEFT
             right.alignment = Pos.BASELINE_RIGHT
