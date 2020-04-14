@@ -16,12 +16,8 @@ import tornadofx.*
 import view.ArticleView
 import view.ArticlesListView
 
-/**
- * TODO
- * 1. Сменить картинку правой кнопкой мыши при редактировании статьи
- * */
-
 const val WIN_HEIGHT = 600.0
+const val WIN_WIDTH = 830.0
 
 class MongoDbView : View() {
 
@@ -134,8 +130,9 @@ class MongoDbView : View() {
 // options: --module-path /usr/share/openjfx/lib --add-modules=javafx.controls
 class MongoDbApp : App(MongoDbView::class) {
     override fun start(stage: Stage) {
+        stage.minHeight = WIN_HEIGHT
+        stage.minWidth = WIN_WIDTH
         stage.isResizable = false
-        stage.height = WIN_HEIGHT
         super.start(stage)
     }
 }

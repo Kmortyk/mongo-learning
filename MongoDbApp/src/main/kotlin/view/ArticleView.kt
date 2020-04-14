@@ -15,14 +15,17 @@ class ArticleView(
 
     private val layout = vbox {
         prefWidth = 600.0
-        prefHeight = WIN_HEIGHT
     }
 
-    override val root = scrollpane { add(layout) }
+    override val root = scrollpane {
+        prefHeight = WIN_HEIGHT
+        add(layout)
+    }
     init { setArticle(article) }
 
     fun setArticle(article: Article) {
         this.article = article
+        root.vvalue = 0.0
         // clear old blocks
         layout.clear()
         // add header
