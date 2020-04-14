@@ -52,7 +52,8 @@ class ArticleView(
                 controller.header(block.text, handler(block), focusHandler(block), size=block.size))
             is TextBlock   -> layout.children.add(index,
                 controller.text(block.text, handler(block), focusHandler(block)))
-            // is ImageBlock  -> root.add(controller.image(b.image))
+            is ImageBlock  -> layout.children.add(index, controller.image(
+                block.image(storage), focusHandler(block)))
         }
     }
 

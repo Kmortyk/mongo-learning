@@ -2,6 +2,8 @@ package storage
 
 import model.Article
 import model.Block
+import org.bson.types.ObjectId
+import java.io.File
 
 enum class SortType {
     BY_NAME, BY_DATE
@@ -23,6 +25,6 @@ interface Storage {
     fun removeBlock(id: String, block: Block)
 
     /* Image */
-    // fun putImage(key: String, article: Article)
-    // fun getImage(key: String)
+    fun addImage(file: File) : ObjectId
+    fun getImage(id: ObjectId) : ByteArray
 }

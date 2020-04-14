@@ -5,6 +5,7 @@ import javafx.scene.control.Menu
 import javafx.scene.control.MenuItem
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import model.HeaderBlock
 import model.ImageBlock
@@ -17,12 +18,7 @@ import view.ArticlesListView
 
 /**
  * TODO
- * 3. in-place добавление блока
- *
- * 4. Таблица картинок в базе данных (как сделать?)
- * 5. Отображение картинки в блоке
- * 6. Загрузка картинки с файловой системы в базу данных
- * 7. Сменить картинку правой кнопкой мыши при редактировании статьи
+ * 1. Сменить картинку правой кнопкой мыши при редактировании статьи
  * */
 
 const val WIN_HEIGHT = 600.0
@@ -32,6 +28,8 @@ class MongoDbView : View() {
     companion object {
         const val ICON_SIZE = 16.0
         const val ICON_SMOOTH = true
+
+        val FORMATS = arrayListOf("jpg", "jpeg", "png", "tiff", "tif")
     }
 
     // main mongo db storage instance
@@ -68,7 +66,15 @@ class MongoDbView : View() {
                     controller.addBlock(TextBlock(text="Awesome text"))
                 })
                 actionable(menu(null, imi), EventHandler {
-                    controller.addBlock(ImageBlock(src=""))
+                    /* !!! Choose image file !!! */
+                    val filters = mutableListOf<FileChooser.ExtensionFilter>()
+                    for (f in FORMATS)
+                        filters.add(FileChooser.ExtensionFilter(f, "*.$f"))
+                    filters.add(FileChooser.ExtensionFilter("all formats", "*.*"))
+                    val file = chooseFile("Choose image", filters.toTypedArray())[0]
+                    /* !!! Add block with the image !!! */
+                    val src = storage.addImage(file)
+                    controller.addBlock(ImageBlock(src=src))
                 })
                 actionable(menu(null, imd), EventHandler {
                     println(articleView.selectedBlockIndex())

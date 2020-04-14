@@ -6,13 +6,16 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.gridfs.GridFSBucket
+import com.mongodb.client.gridfs.GridFSBuckets
+import com.mongodb.client.gridfs.GridFSDownloadStream
+import com.mongodb.client.gridfs.model.GridFSUploadOptions
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Indexes
-import com.mongodb.client.model.UpdateOptions
-import com.mongodb.client.model.Updates
 import model.*
 import org.bson.Document
 import org.bson.types.ObjectId
+import java.io.File
 import java.util.*
 
 
@@ -32,6 +35,7 @@ class MongoDbStorage : Storage {
 
     private val client : MongoClient
     private val db : MongoDatabase
+    private val imgBucket: GridFSBucket
 
     init {
         val settings = MongoClientSettings.builder()
@@ -41,6 +45,7 @@ class MongoDbStorage : Storage {
 
         client = MongoClients.create(settings)
         db = client.getDatabase(DATABASE_NAME)
+        imgBucket = GridFSBuckets.create(db, "images");
     }
 
     private fun blockDocument(b: Block) : Document {
@@ -98,7 +103,7 @@ class MongoDbStorage : Storage {
             when(b["type"]) {
                 "header" -> blocks.add(HeaderBlock(_id="${b["_id"]}", text="${b["text"]}"))
                 "text" -> blocks.add(TextBlock(_id="${b["_id"]}", text="${b["text"]}"))
-                "image" -> blocks.add(ImageBlock(_id="${b["_id"]}", src="${b["src"]}"))
+                "image" -> blocks.add(ImageBlock(_id="${b["_id"]}", src=b["src"] as ObjectId))
             }
         }
 
@@ -189,5 +194,26 @@ class MongoDbStorage : Storage {
 
         db.getCollection(COL_ARTICLES)
             .updateOne(query, command)
+    }
+
+    /* --- Images --------------------------------------------------------------------------------------------------- */
+
+    override fun addImage(file: File): ObjectId {
+        val stream = file.inputStream()
+        val options = GridFSUploadOptions()
+            .chunkSizeBytes(350 * 1024)
+            .metadata(Document("type", "image"))
+
+        return imgBucket.uploadFromStream(file.name, stream, options)
+    }
+
+    override fun getImage(id: ObjectId): ByteArray {
+        val stream: GridFSDownloadStream = imgBucket.openDownloadStream(id)
+        val length = stream.gridFSFile.length.toInt()
+        val bts = ByteArray(length)
+
+        stream.read(bts)
+        stream.close()
+        return bts
     }
 }

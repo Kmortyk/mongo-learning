@@ -49,7 +49,7 @@ class ArticleController(): Controller() {
 
     fun image(image: Image, f: ChangeListener<Boolean>) : StackPane {
         return StackPane().apply {
-            focus(imageview(image) {}, f)
+            focus(imageview(image), f)
         }
     }
 
