@@ -196,6 +196,21 @@ class MongoDbStorage : Storage {
             .updateOne(query, command)
     }
 
+    override fun updateHeader(id: String, block: HeaderBlock) {
+        if(id.isEmpty())
+            return
+
+        val query = BasicDBObject()
+        val data = BasicDBObject()
+        val command = BasicDBObject()
+
+        query["_id"] = ObjectId(id)
+        data["name"] = block.text
+        command["\$set"] = data
+
+        db.getCollection(COL_ARTICLES).updateOne(query, command)
+    }
+
     /* --- Images --------------------------------------------------------------------------------------------------- */
 
     override fun addImage(file: File): ObjectId {

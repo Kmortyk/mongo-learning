@@ -3,7 +3,7 @@ package storage
 import java.sql.Date
 import java.text.SimpleDateFormat
 
-data class ArticleListItem(val name: String, val timestamp: Long) {
+data class ArticleListItem(var name: String, val timestamp: Long) {
 
     public val date: String
 

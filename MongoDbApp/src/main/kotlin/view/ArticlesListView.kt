@@ -23,6 +23,7 @@ class ArticlesListView(private val articleView: ArticleView,
 
     init {
         articleItems = storage.getArticleItems()
+        articleView.setArticlesListView(this)
     }
 
     override val root = listview<ArticleListItem> {
@@ -107,5 +108,12 @@ class ArticlesListView(private val articleView: ArticleView,
         root.items.clear()
         root.items.addAll(found)
         root.items.add(ITEM_ADD)
+    }
+
+    fun updateHeader(oldValue: String, newValue: String) {
+        for(itm in root.items) // if article with name exists fixme not necessary?
+            if(itm.name == oldValue)
+                itm.name = newValue
+        root.refresh()
     }
 }

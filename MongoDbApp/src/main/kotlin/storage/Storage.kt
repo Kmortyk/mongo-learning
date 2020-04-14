@@ -2,6 +2,7 @@ package storage
 
 import model.Article
 import model.Block
+import model.HeaderBlock
 import org.bson.types.ObjectId
 import java.io.File
 
@@ -18,6 +19,7 @@ interface Storage {
 
     /* Articles */
     fun getArticleItems(type: SortType = SortType.BY_NAME) : List<ArticleListItem>
+    fun updateHeader(id: String, block: HeaderBlock)
 
     /* Block */
     fun addBlock   (id: String, block: Block, position: Int = -1) : String // -> blockId

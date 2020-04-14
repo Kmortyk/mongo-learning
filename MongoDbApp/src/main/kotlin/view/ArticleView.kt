@@ -27,7 +27,7 @@ class ArticleView(
         layout.clear()
         // add header
         layout.add(controller.header(article.articleHeader.text,
-            handler(article.articleHeader),
+            headerHandler(article.articleHeader),
             focusHandler(article.articleHeader)))
         // add content blocks
         for(i in 0 until article.contentBlocks.size) // first - header
@@ -57,6 +57,47 @@ class ArticleView(
         }
     }
 
+    /* --- Selected block ------------------------------------------------------------------------------------------- */
+
+    fun selectedBlockIndex(): Int { return selectedBlockIndex }
+
+    private fun layoutSelectedIndex(): Int { return selectedBlockIndex + 1 /* for header */ }
+
+    fun selectedBlock(): Block {
+        if(selectedBlockIndex() < 0)
+            return article.articleHeader
+        return article.contentBlocks[selectedBlockIndex()]
+    }
+
+    fun removeSelectedBlock() {
+        if(layoutSelectedIndex() > 0) { // not header
+            layout.children.removeAt(layoutSelectedIndex())
+            article.contentBlocks.removeAt(selectedBlockIndex())
+        }
+    }
+
+    /* --- Article list --------------------------------------------------------------------------------------------- */
+
+    private var articlesListView: ArticlesListView? = null
+
+    fun setArticlesListView(articlesListView: ArticlesListView) {
+        this.articlesListView = articlesListView
+    }
+
+    /* --- Handlers ------------------------------------------------------------------------------------------------- */
+
+    private fun headerHandler(block: HeaderBlock) : ChangeListener<String> {
+        return ChangeListener<String> { _, oldValue, newValue ->
+            run {
+                block.text = newValue
+                storage.updateHeader(articleKey(), block)
+                if(articlesListView != null) {
+                    articlesListView!!.updateHeader(oldValue ?: "", newValue ?: "")
+                }
+            }
+        }
+    }
+
     private fun handler(block: Block) : ChangeListener<String> {
         return ChangeListener<String> { _, _, newValue ->
             run {
@@ -81,23 +122,6 @@ class ArticleView(
                 if(article.articleHeader.id == block.id)
                     selectedBlockIndex = -1
             }
-        }
-    }
-
-    fun selectedBlockIndex(): Int { return selectedBlockIndex }
-
-    private fun layoutSelectedIndex(): Int { return selectedBlockIndex + 1 /* for header */ }
-
-    fun selectedBlock(): Block {
-        if(selectedBlockIndex() < 0)
-            return article.articleHeader
-        return article.contentBlocks[selectedBlockIndex()]
-    }
-
-    fun removeSelectedBlock() {
-        if(layoutSelectedIndex() > 0) { // not header
-            layout.children.removeAt(layoutSelectedIndex())
-            article.contentBlocks.removeAt(selectedBlockIndex())
         }
     }
 }
