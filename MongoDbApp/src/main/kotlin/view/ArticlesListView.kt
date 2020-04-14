@@ -110,10 +110,16 @@ class ArticlesListView(private val articleView: ArticleView,
         root.items.add(ITEM_ADD)
     }
 
-    fun updateHeader(oldValue: String, newValue: String) {
-        for(itm in root.items) // if article with name exists fixme not necessary?
+    fun updateHeader(oldValue: String, newValue: String) : Boolean {
+        for(itm in root.items)
+            if(itm.name == newValue)
+                return false
+
+        for(itm in root.items)
             if(itm.name == oldValue)
                 itm.name = newValue
+
         root.refresh()
+        return true
     }
 }

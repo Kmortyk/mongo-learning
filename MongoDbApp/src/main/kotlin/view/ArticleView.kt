@@ -89,10 +89,12 @@ class ArticleView(
     private fun headerHandler(block: HeaderBlock) : ChangeListener<String> {
         return ChangeListener<String> { _, oldValue, newValue ->
             run {
-                block.text = newValue
-                storage.updateHeader(articleKey(), block)
                 if(articlesListView != null) {
-                    articlesListView!!.updateHeader(oldValue ?: "", newValue ?: "")
+                    val upd = articlesListView!!.updateHeader(oldValue ?: "", newValue ?: "")
+                    if(upd) {
+                        block.text = newValue
+                        storage.updateHeader(articleKey(), block)
+                    }
                 }
             }
         }
