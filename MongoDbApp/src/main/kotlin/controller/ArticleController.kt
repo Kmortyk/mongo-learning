@@ -21,6 +21,8 @@ class ArticleController(): Controller() {
         // text
         const val TEXT_START_HEIGHT = 26.0
         const val TEXT_LINE_STEP = 16.0
+        // image
+        const val IMG_HEIGHT = 300.0
     }
 
     fun header(text: String, l: ChangeListener<String>, f: ChangeListener<Boolean>, size: Int = 1) : StackPane {
@@ -50,7 +52,10 @@ class ArticleController(): Controller() {
 
     fun image(image: Image, f: ChangeListener<Boolean>) : StackPane {
         return StackPane().apply {
-            val img = imageview(image)
+            val img = imageview(image) {
+                fitHeight = IMG_HEIGHT
+                isPreserveRatio = true
+            }
             img.setOnMouseClicked {
                 f.changed(img.focusedProperty(), false, true)
             }
@@ -58,7 +63,7 @@ class ArticleController(): Controller() {
     }
 
     private fun resizable(textArea: TextArea, startHeight: Double, perLine: Double) : TextArea {
-        textArea.setPrefSize(200.0, 40.0)
+        // textArea.setPrefSize(200.0, 40.0)
         textArea.isWrapText = true
         var oldLines = textArea.text.split('\n').size
         textArea.prefHeight = startHeight + perLine * (oldLines-1)

@@ -130,8 +130,8 @@ class MongoDbView : View() {
 // options: --module-path /usr/share/openjfx/lib --add-modules=javafx.controls
 class MongoDbApp : App(MongoDbView::class) {
     override fun start(stage: Stage) {
-        stage.minHeight = WIN_HEIGHT
-        stage.minWidth = WIN_WIDTH
+        // stage.minHeight = WIN_HEIGHT
+        // stage.minWidth = WIN_WIDTH
         stage.isResizable = false
         super.start(stage)
     }

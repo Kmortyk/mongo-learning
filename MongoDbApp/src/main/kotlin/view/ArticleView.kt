@@ -2,6 +2,7 @@ package view
 
 import WIN_HEIGHT
 import controller.ArticleController
+import controller.ArticleController.Companion.HEADER_START_HEIGHT
 import javafx.beans.value.ChangeListener
 import storage.Storage
 import tornadofx.*
@@ -18,8 +19,8 @@ class ArticleView(
     }
 
     override val root = scrollpane {
-        prefHeight = WIN_HEIGHT
         add(layout)
+        prefHeight = WIN_HEIGHT
     }
     init { setArticle(article) }
 
