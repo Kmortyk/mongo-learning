@@ -126,6 +126,9 @@ class ArticleView(
                 // println("\${article.articleHeader.id} == ${block.id}")
                 if(article.articleHeader.id == block.id)
                     selectedBlockIndex = -1
+
+//                if(selectedBlockIndex > 0)
+//                    println("focus! " + article.contentBlocks[selectedBlockIndex])
             }
         }
     }

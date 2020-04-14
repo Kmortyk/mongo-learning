@@ -5,6 +5,7 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.TextArea
 import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.layout.StackPane
 import javafx.scene.text.FontWeight
 import tornadofx.*
@@ -49,7 +50,10 @@ class ArticleController(): Controller() {
 
     fun image(image: Image, f: ChangeListener<Boolean>) : StackPane {
         return StackPane().apply {
-            focus(imageview(image), f)
+            val img = imageview(image)
+            img.setOnMouseClicked {
+                f.changed(img.focusedProperty(), false, true)
+            }
         }
     }
 
